@@ -1,0 +1,44 @@
+import pandas as pd
+from surprise import Dataset, Reader, SVD
+from surprise.model_selection import train_test_split
+from surprise import accuracy
+
+# Step 1: Load user ratings data
+ratings_data = pd.read_csv('ratings.csv')  # Contains userId, movieId, rating
+movies_data = pd.read_csv('movies.csv')    # Contains movieId, title, genres
+
+# Step 2: Prepare data for Surprise library
+reader = Reader(rating_scale=(0.5, 5.0))
+data = Dataset.load_from_df(ratings_data[['userId', 'movieId', 'rating']], reader)
+
+# Step 3: Train-Test Split
+trainset, testset = train_test_split(data, test_size=0.2)
+
+# Step 4: Train SVD model
+model = SVD()
+model.fit(trainset)
+
+# Step 5: Evaluate the model
+predictions = model.test(testset)
+print("RMSE:", accuracy.rmse(predictions))
+
+# Step 6: Make personalized recommendations
+def get_recommendations(user_id, n=10):
+    movie_ids = movies_data['movieId'].unique()
+    rated_movies = ratings_data[ratings_data['userId'] == user_id]['movieId']
+    unrated_movies = [mid for mid in movie_ids if mid not in rated_movies.values]
+
+    predicted_ratings = [
+        (mid, model.predict(user_id, mid).est)
+        for mid in unrated_movies
+    ]
+    top_recommendations = sorted(predicted_ratings, key=lambda x: x[1], reverse=True)[:n]
+    top_movie_ids = [mid for mid, _ in top_recommendations]
+    
+    return movies_data[movies_data['movieId'].isin(top_movie_ids)]
+
+# Step 7: Display Recommendations
+user_id_input = int(input("Enter User ID for recommendations: "))
+recommended_movies = get_recommendations(user_id_input)
+print("\nTop Movie Recommendations for User", user_id_input)
+print(recommended_movies[['title', 'genres']])
