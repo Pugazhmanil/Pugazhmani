@@ -1,0 +1,34 @@
+1. MovieLens Dataset (by GroupLens)
+
+Best choice for recommendation systems
+
+Includes user ratings, movie metadata, tags, and timestamps
+
+Variants: 100K, 1M, 10M, 20M, and 25M ratings
+
+Example features: userId, movieId, rating, timestamp, genres, title
+
+
+2. IMDb Datasets
+
+Massive collection of movie data: ratings, cast, crew, genres, plot, etc.
+
+More detailed metadata but lacks direct user-rating interactions (useful for content-based models)
+
+
+3. The Movies Dataset (on Kaggle)
+
+Combines metadata from IMDb and ratings from MovieLens
+
+Includes user ratings, metadata (genres, cast, crew), and keywords
+
+Good for hybrid (collaborative + content-based) recommendation models
+
+
+4. Netflix Prize Dataset (historical)
+
+Contains 100 million anonymized user ratings
+
+No detailed movie metadata
+
+Still useful for pure collaborative filtering research
